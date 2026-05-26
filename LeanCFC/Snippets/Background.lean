@@ -1,4 +1,4 @@
-import Mathlib.Algebra.Algebra.Spectrum
+module public import Mathlib.Algebra.Algebra.Spectrum.Basic
 
 namespace Background
 

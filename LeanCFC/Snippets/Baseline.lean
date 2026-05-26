@@ -1,6 +1,6 @@
-import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.SpecialFunctions.Complex.Log
+module
+
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
 open StarAlgebra elemental
 noncomputable section
 namespace LeanCFC
@@ -17,7 +17,7 @@ def continuousFunctionalCalculus (a : A) [IsStarNormal a] :
 /-- The continuous functional calculus identifies the (restriction of) the
 identity function on the spectrum of `a` with `a`. -/
 theorem continuousFunctionalCalculus_map_id (a : A) [IsStarNormal a] :
-    continuousFunctionalCalculus a (.restrict (spectrum ℂ a) (.id ℂ)) =
+    continuousFunctionalCalculus a ((ContinuousMap.id ℂ).restrict (spectrum ℂ a)) =
       ⟨a, self_mem ℂ a⟩ :=
   gelfandStarTransform (elemental ℂ a) |>.symm_apply_apply _
 
@@ -38,56 +38,57 @@ example {a b : A} [IsStarNormal a] [IsStarNormal b] :
 
 example {u : unitary A} {f : C(Metric.sphere (0 : ℂ) 1, ℂ)} : A :=
   continuousFunctionalCalculus (u : A)
-    (f.comp (.inclusion (unitary.spectrum_subset_circle u)))
+    (f.comp (.inclusion (Unitary.spectrum_subset_circle u)))
 
 /--
-error: tactic 'rewrite' failed, motive is not type correct:
+error: Tactic `rewrite` failed: motive is not type correct:
   fun _a => (continuousFunctionalCalculus _a) (ContinuousMap.restrict (spectrum ℂ _a) f) = 0
-Error: application type mismatch
-  @instNormedCommRingSubtypeMemStarSubalgebraOfIsStarNormal ℂ A Complex.commRing Complex.instStarRing
-    CStarAlgebra.toNormedRing NormedAlgebra.toAlgebra CStarAlgebra.toStarRing ⋯ ⋯ _a ⋯
-argument
-  inst✝¹
+Error: Application type mismatch: The argument
+  ha
 has type
-  IsStarNormal a : Prop
+  IsStarNormal a
 but is expected to have type
-  IsStarNormal _a : Prop
+  IsStarNormal _a
+in the application
+  @instCommCStarAlgebraSubtypeMemStarSubalgebraComplexOfIsStarNormal A inst✝ _a ⋯
 
 Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
 
 Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
 A : Type u_1
-inst✝² : CStarAlgebra A
+inst✝ : CStarAlgebra A
 a b : A
-inst✝¹ : IsStarNormal a
-inst✝ : IsStarNormal b
+ha : IsStarNormal a
+hb : IsStarNormal b
 hab : a = b
 f : C(ℂ, ℂ)
 H : (continuousFunctionalCalculus a) (ContinuousMap.restrict (spectrum ℂ a) f) = 0
 ⊢ (continuousFunctionalCalculus b) (ContinuousMap.restrict (spectrum ℂ b) f) = 0
 -/
 #guard_msgs in
-example {a b : A} [IsStarNormal a] [IsStarNormal b] (hab : a = b) {f : C(ℂ, ℂ)}
-    (H : continuousFunctionalCalculus a (f.restrict _) = 0) :
-    continuousFunctionalCalculus b (f.restrict _) = 0 := by
+example {a b : A} [ha : IsStarNormal a] [hb : IsStarNormal b] (hab : a = b) {f : C(ℂ, ℂ)}
+    (H : continuousFunctionalCalculus a (f.restrict (spectrum ℂ a)) = 0) :
+    continuousFunctionalCalculus b (f.restrict (spectrum ℂ b)) = 0 := by
   rw [hab] at H -- "motive is not type correct" because of `IsStarNormal a`
   sorry
 
 /--
-error: tactic 'rewrite' failed, motive is not type correct:
+error: Tactic `rewrite` failed: motive is not type correct:
   fun _a => (continuousFunctionalCalculus _a) f = 0
-Error: application type mismatch
-  (continuousFunctionalCalculus _a) f
-argument
+Error: Application type mismatch: The argument
   f
 has type
-  C(↑(spectrum ℂ a), ℂ) : Type
+  C(↑(spectrum ℂ a), ℂ)
 but is expected to have type
-  C(↑(spectrum ℂ _a), ℂ) : Type
+  C(↑(spectrum ℂ _a), ℂ)
+in the application
+  (continuousFunctionalCalculus _a) f
 
 Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
 
 Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
 A : Type u_1
 inst✝¹ : CStarAlgebra A
 B : Type u_2
@@ -112,4 +113,25 @@ theorem continuousFunctionalCalculus_map_comp {a : A} [IsStarNormal a]
     (H : ∀ x, f x = f' x) :
     continuousFunctionalCalculus a (g.comp f') =
     continuousFunctionalCalculus (continuousFunctionalCalculus a f) g := by
+  sorry
+
+-- this lemma is missing from Mathlib
+@[simp]
+lemma spectrum.neg_mem_neg {a : A} {x : ℂ} :
+    -x ∈ spectrum ℂ (-a) ↔ x ∈ spectrum ℂ a := by
+  simp [← spectrum.neg_eq]
+
+-- this lemma is missing from Mathlib
+@[fun_prop]
+lemma Subtype.continuous_map {α β : Type*} [TopologicalSpace α] [TopologicalSpace β]
+    {p : α → Prop} {q : β → Prop} {f : α → β}
+    (hf : ∀ x, p x → q (f x)) (h_cont : ContinuousOn f {x | p x}) :
+    Continuous (Subtype.map f hf) := by
+  simpa [continuous_induced_rng, Function.comp_def]
+    using h_cont.comp_continuous (by fun_prop) (by simp)
+
+theorem continuousFunctionalCalculus_map_neg {a : A}
+    [IsStarNormal a] (f : C(spectrum ℂ (-a), ℂ)) :
+    (continuousFunctionalCalculus (-a) f : A) =
+      continuousFunctionalCalculus a (f.comp ⟨Subtype.map (- ·) (by simp), by fun_prop⟩) := by
   sorry
