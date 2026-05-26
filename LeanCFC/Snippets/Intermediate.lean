@@ -1,12 +1,12 @@
-import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
+module public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
 noncomputable section
 open Set
 namespace LeanCFC
 
 variable {A : Type*} [CStarAlgebra A]
 
+open scoped Classical in
 def cfc (f : ℂ → ℂ) (a : A) : A :=
-  letI := Classical.propDecidable
   if h : IsStarNormal a ∧ Continuous ((spectrum ℂ a).restrict f)
   then
     letI := h.1
@@ -41,7 +41,7 @@ lemma cfc_not_normal {f : ℂ → ℂ} {a : A} (ha : ¬IsStarNormal a) :
 lemma cfc_add {f g : ℂ → ℂ} {a : A} [ha : IsStarNormal a]
     (hf : ContinuousOn f (spectrum ℂ a)) (hg : ContinuousOn g (spectrum ℂ a)) :
     cfc (f + g) a = cfc f a + cfc g a := by
-  rw [Pi.add_def, cfc_def (hf.add hg), cfc_def hf, cfc_def hg]
+  rw [cfc_def (hf.add hg), cfc_def hf, cfc_def hg]
   norm_cast
   exact map_add (continuousFunctionalCalculus a) ⟨_, hf.restrict⟩ ⟨_, hg.restrict⟩
 
@@ -64,7 +64,8 @@ lemma range_cfc_eq {a : A} [ha : IsStarNormal a] :
     Set.range (fun f ↦ cfc f a) = StarAlgebra.elemental ℂ a :=
   sorry
 
-lemma norm_cfc_eq {f : ℂ → ℂ} {a : A} [ha : IsStarNormal a] :
+lemma norm_cfc_eq {f : ℂ → ℂ} {a : A} [ha : IsStarNormal a]
+    (hf : ContinuousOn f (spectrum ℂ a)) :
     ‖cfc f a‖ = sInf {C : ℝ | 0 ≤ C ∧ ∀ x ∈ spectrum ℂ a, ‖f x‖ ≤ C} :=
   sorry
 
@@ -111,7 +112,7 @@ lemma range_cfc_eq' {a : A} [ha : IsStarNormal a] :
     by_cases h : ContinuousOn f (spectrum ℂ a)
     · simp [cfc_def h]
     · rw [continuousOn_iff_continuous_restrict] at h
-      simpa [cfc, dif_neg (not_and_of_not_right (IsStarNormal a) h)] using zero_mem _
+      simp [cfc, dif_neg (not_and_of_not_right (IsStarNormal a) h)]
   · intro hx
     lift x to StarAlgebra.elemental ℂ a using hx
     let f' := (continuousFunctionalCalculus a).symm x
@@ -154,6 +155,8 @@ lemma IsStarNormal.cfc_map {f : ℂ → ℂ} {a : A} : IsStarNormal (cfc f a) :=
   · rw [cfc_not_continuous f_cont]
     infer_instance
 
+-- The proof below is messy and not representative of the proof in Mathlib.
+-- The point is to check that `cfc_comp` above is indeed provable.
 lemma cfc_comp' [CompleteSpace A] {f g : ℂ → ℂ} {a : A} [ha : IsStarNormal a]
     (hg : ContinuousOn g (f '' spectrum ℂ a)) (hf : ContinuousOn f (spectrum ℂ a)) :
     cfc (g ∘ f) a = cfc g (cfc f a) := by
@@ -182,7 +185,7 @@ lemma cfc_comp' [CompleteSpace A] {f g : ℂ → ℂ} {a : A} [ha : IsStarNormal
   change φ_a gf_tilde = φ_b g_tilde
 
   set f_hat : C(spectrum ℂ a, spectrum ℂ b) :=
-    ⟨f_mapsto.restrict, hf.restrict_mapsTo f_mapsto⟩
+    ⟨f_mapsto.restrict, hf.mapsToRestrict f_mapsto⟩
   set ψ : C(spectrum ℂ b, ℂ) →⋆ₐ[ℂ] A :=
     φ_a.comp (ContinuousMap.compStarAlgHom' ℂ ℂ f_hat)
   have ψ_id : ψ (.restrict _ (.id _)) = b := rfl

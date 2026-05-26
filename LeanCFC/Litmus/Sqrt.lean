@@ -1,4 +1,7 @@
-import Mathlib
+module
+
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
+
 open scoped NNReal
 noncomputable section
 
@@ -56,6 +59,12 @@ lemma sqrt_eq_cfcₙ_real_sqrt (a : A) (ha : 0 ≤ a := by cfc_tac) :
   nth_rw 2 [← cfcₙ_id' ℝ a]
   refine cfcₙ_congr fun x hx ↦ Real.mul_self_sqrt ?_
   exact quasispectrum_nonneg_of_nonneg a ha x hx
+
+lemma cfcₙ_comp_sqrt_real (f : ℝ → ℝ) (a : A)
+    (hf : ContinuousOn f ((√·) '' quasispectrum ℝ a) := by cfc_cont_tac)
+    (hf0 : f 0 = 0 := by cfc_zero_tac) (ha : 0 ≤ a := by cfc_tac) :
+    cfcₙ f (sqrt a) = cfcₙ (f √·) a := by
+  rw [sqrt_eq_cfcₙ_real_sqrt a, ← cfcₙ_comp' ..]
 
 lemma sqrt_zero : sqrt (0 : A) = 0 := by simp [sqrt]
 

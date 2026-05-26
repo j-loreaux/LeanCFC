@@ -1,13 +1,13 @@
-import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Unital
+module public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Unital
 
 namespace LeanCFC
 
-theorem cfc_le_iff {R : Type u} {A : Type*} {p : A → Prop} [OrderedCommRing R]
-    [StarRing R] [MetricSpace R] [TopologicalRing R] [ContinuousStar R]
-    [∀ (α : Type u) [TopologicalSpace α], StarOrderedRing C(α, R)]
-    [TopologicalSpace A] [Ring A] [StarRing A] [PartialOrder A]
-    [StarOrderedRing A] [Algebra R A] [ContinuousFunctionalCalculus R p]
-    [NonnegSpectrumClass R A] (f g : R → R) (a : A)
+theorem cfc_le_iff {R A : Type*} {p : A → Prop} [CommRing R] [PartialOrder R]
+    [StarRing R] [MetricSpace R] [IsTopologicalRing R] [ContinuousStar R]
+    [ContinuousSqrt R] [StarOrderedRing R] [TopologicalSpace A]
+    [Ring A] [StarRing A] [PartialOrder A] [StarOrderedRing A] [Algebra R A]
+    [instCFC : ContinuousFunctionalCalculus R A p] [NonnegSpectrumClass R A]
+    (f g : R → R) (a : A)
     (hf : ContinuousOn f (spectrum R a) := by cfc_cont_tac)
     (hg : ContinuousOn g (spectrum R a) := by cfc_cont_tac)
     (ha : p a := by cfc_tac) :

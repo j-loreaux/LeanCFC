@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
 
 /-! # Litmus test for working with inverses
 

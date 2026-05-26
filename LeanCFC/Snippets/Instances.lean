@@ -1,4 +1,4 @@
-import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Restrict
+module public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Restrict
 
 namespace LeanCFC
 
@@ -16,18 +16,18 @@ structure QuasispectrumRestricts {R S A : Type*} [CommSemiring R] [CommSemiring 
   /-- `f` is a left inverse of `algebraMap R S`. -/
   left_inv : Function.LeftInverse f (algebraMap R S)
 
-/-- Given a `ContinuousFunctionalCalculus S q`. If we form the predicate `p` for `a : A`
+/-- Given a `ContinuousFunctionalCalculus S q`, if we form the predicate `p` for `a : A`
 characterized by: `q a` and the spectrum of `a` restricts to the scalar subring `R` via
 `f : C(S, R)`, then we can get a restricted functional calculus
 `ContinuousFunctionalCalculus R p`. -/
 theorem SpectrumRestricts.cfc {R S A : Type*} {p q : A → Prop} [Semifield R] [StarRing R]
-    [MetricSpace R] [TopologicalSemiring R] [ContinuousStar R] [Semifield S] [StarRing S]
-    [MetricSpace S] [TopologicalSemiring S] [ContinuousStar S] [Ring A] [StarRing A]
+    [MetricSpace R] [IsTopologicalSemiring R] [ContinuousStar R] [Semifield S] [StarRing S]
+    [MetricSpace S] [IsTopologicalSemiring S] [ContinuousStar S] [Ring A] [StarRing A]
     [Algebra S A] [Algebra R S] [Algebra R A] [IsScalarTower R S A] [StarModule R S]
-    [ContinuousSMul R S] [TopologicalSpace A] [ContinuousFunctionalCalculus S q]
+    [ContinuousSMul R S] [TopologicalSpace A] [ContinuousFunctionalCalculus S A q]
     [CompleteSpace R] (f : C(S, R)) (halg : IsUniformEmbedding ⇑(algebraMap R S))
     (h0 : p 0) (h : ∀ (a : A), p a ↔ q a ∧ SpectrumRestricts a ⇑f) :
-    ContinuousFunctionalCalculus R p :=
+    ContinuousFunctionalCalculus R A p :=
   sorry
 
 end LeanCFC

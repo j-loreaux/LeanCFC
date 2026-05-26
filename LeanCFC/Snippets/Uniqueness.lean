@@ -1,14 +1,14 @@
-import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Unital
+module public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Unital
 
 namespace LeanCFC.Uniqueness
 
-variable {R A : Type*} (p : outParam (A → Prop))
-    [CommSemiring R] [StarRing R] [MetricSpace R] [TopologicalSemiring R]
-    [ContinuousStar R] [Ring A] [StarRing A] [TopologicalSpace A]
-    [Algebra R A] [ContinuousFunctionalCalculus R p]
-    [ContinuousMap.UniqueHom R A]
 
-lemma cfc_comp (g : R → R) (f : R → R) (a : A) (ha : p a)
+lemma cfc_comp {R A : Type*} (p : outParam (A → Prop))
+    [CommSemiring R] [StarRing R] [MetricSpace R] [IsTopologicalSemiring R]
+    [ContinuousStar R] [Ring A] [StarRing A] [TopologicalSpace A]
+    [Algebra R A] [ContinuousFunctionalCalculus R A p]
+    [ContinuousMap.UniqueHom R A]
+    (g : R → R) (f : R → R) (a : A) (ha : p a)
     (hg : ContinuousOn g (f '' spectrum R a))
     (hf : ContinuousOn f (spectrum R a)) :
     cfc (g ∘ f) a = cfc g (cfc f a) := by
@@ -26,7 +26,7 @@ lemma cfc_comp (g : R → R) (f : R → R) (a : A) (ha : p a)
   · exact fun _ ↦ rfl
 
 class ContinuousMap.UniqueHom (R A : Type*) [CommSemiring R] [StarRing R]
-    [MetricSpace R] [TopologicalSemiring R] [ContinuousStar R] [Ring A] [StarRing A]
+    [MetricSpace R] [IsTopologicalSemiring R] [ContinuousStar R] [Ring A] [StarRing A]
     [TopologicalSpace A] [Algebra R A] : Prop where
   eq_of_continuous_of_map_id (s : Set R) [CompactSpace s]
     (φ ψ : C(s, R) →⋆ₐ[R] A) (hφ : Continuous φ) (hψ : Continuous ψ)
